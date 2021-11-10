@@ -4,7 +4,7 @@
       <li class='collection-item'>
         <%= link(topic.title, to: topic_path(@conn, :show, topic)) %>
 
-        <%= if @conn.assigns.user.id == topic.user_id do %>
+        <%= if @conn.assigns.user && @conn.assigns.user.id == topic.user_id do %>
           <div class="right">
             <%= link("edit", to: topic_path(@conn, :edit, topic)) %>
             <%= link("delete", to: topic_path(@conn, :delete, topic), method: :delete, data: [confirm: "Really?"]) %>
@@ -14,8 +14,10 @@
   <% end %>
 </ul>
 
-<div class="fixed-action-btn">
-  <%= link(to: topic_path(@conn, :new), class: "btn-floating btn-large waves-effect wave-light red") do %>
-    <i class="material-icons">add</i>
-  <% end %>
-</div>
+<%= if @conn.assigns.user do %>
+  <div class="fixed-action-btn">
+    <%= link(to: topic_path(@conn, :new), class: "btn-floating btn-large waves-effect wave-light red") do %>
+      <i class="material-icons">add</i>
+    <% end %>
+  </div>
+<% end %>
