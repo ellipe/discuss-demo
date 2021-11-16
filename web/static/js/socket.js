@@ -10,16 +10,43 @@ const createSocket = topicId => {
   channel
     .join()
     .receive('ok', resp => {
-      console.log('Joined successfully', resp)
+      renderComments(resp.comments)
     })
     .receive('error', resp => {
       console.log('Unable to join', resp)
     })
 
+  channel.on(`comments:${topicId}:new`, ({ comment }) => {
+    renderComment(comment)
+  })
+
   document.querySelector('button').addEventListener('click', function () {
     const content = document.querySelector('textarea').value
     channel.push('comments:add', { content: content })
+    clearCommentInput()
   })
+}
+
+const commentTemplate = comment => {
+  return `<li class="collection-item"> ${comment.content}</li>`
+}
+
+const renderComment = comment => {
+  const renderedComment = commentTemplate(comment)
+
+  document.querySelector('.collection').innerHTML += renderedComment
+}
+
+const clearCommentInput = () => {
+  document.querySelector('.materialize-textarea').value = ''
+}
+
+const renderComments = comments => {
+  const renderedComments = comments.map(comment => {
+    return commentTemplate(comment)
+  })
+
+  document.querySelector('.collection').innerHTML = renderedComments.join('')
 }
 
 window.createSocket = createSocket
